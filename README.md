@@ -71,10 +71,11 @@ A tools can generate samples for OCR trainning.
 + PIL
 
 ###使用方法：
-+ ###genSamples 构造函数
++ genSamples 构造函数
 	+ chineseFontpath 车牌中文字体的路径
 	+ EnglishFontPath 车牌英文字体的路径
-+ ###genImage 渲染生成一张样本
+
++ genImage 渲染生成一张样本
 	+ id 用于生成字符索引 [0,30] 为汉字 [31，41] 为数字 [42,64] 为英文大写字符
 	+ tranformFactor 形变程度 为了使分类器具有较好抗扭曲性应该对其生成的字符进行一定程度的形变。这里建议的值是  5-10。 越大形变程度越大
 	+ shadeSize 遮罩尺寸 能使字符
@@ -85,7 +86,8 @@ A tools can generate samples for OCR trainning.
 	+ blurFilter_level1 削弱模糊的字符
 	+ blurFilter_level2 排除模块的字符
 	+ size 输出尺寸
-+ ###genBatch 批量生成
+	
++ genBatch 批量生成
 	+ batchSize 每批的尺寸 如果是 1000 就是每个字符 1000 张
 	+ charRange 字符范围 如 range(65) ,range(0,31)
 	+ outputPath 输出路径
