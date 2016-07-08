@@ -1,7 +1,8 @@
 #用于OCR的字符样本生成工具
 A tools can generate samples for OCR trainning.
 
-###生成的字符样张：![](./samples/01/04.jpg)
+###生成的字符样张：
+![](./samples/01/04.jpg)
 ![](./samples/02/04.jpg)
 ![](./samples/03/04.jpg)
 ![](./samples/04/04.jpg)
