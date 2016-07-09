@@ -1,4 +1,4 @@
-#用于OCR的字符样本生成工具
+#用于OCR训练的字符样本生成工具
 A tools can generate samples for OCR trainning.
 
 ###生成的字符样张：
