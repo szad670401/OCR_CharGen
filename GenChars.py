@@ -54,6 +54,7 @@ def AddSmudginess(img, Smu):
     adder = Smu[rows:rows + 50, cols:cols + 50];
     adder = cv2.resize(adder, (50, 50));
     #   adder = cv2.bitwise_not(adder)
+    img = cv2.resize(img,(50,50))
     img = cv2.bitwise_not(img)
     img = cv2.bitwise_and(adder, img)
     img = cv2.bitwise_not(img)
@@ -144,8 +145,9 @@ class genSamples:
         new_img = cv2.resize(new_img, (50, 50));
         return new_img;
 
-    def genImage(self, id, tranformFactor=7, shadeFactor=10, shadeFilter=[], smuFilter=[], blur=3,rotFilter = [],blurFilter_level1=[],
+    def genImage(self,c_batch_num,id, tranformFactor=7, shadeSize=10, shadeFilter=[], smuFilter=[], blur=3,rotFilter = [],blurFilter_level1=[],
                  blurFilter_level2=[], size=20):
+
         if (id > 30):
             img = self.GenEng(self.fontE, self.chars[id]);
             img = cv2.bitwise_not(img)
@@ -154,19 +156,17 @@ class genSamples:
             img = cv2.bitwise_not(img)
             border = r(tranformFactor);
             side = border*2
-            img = cv2.resize(img, (40-side, 50))
-            img = cv2.copyMakeBorder(img, 0, 0, border, border, cv2.BORDER_CONSTANT);
-        if id not in rotFilter:
+            img = cv2.resize(img, (40-14, 50))
+            img = cv2.copyMakeBorder(img, 0, 0, 7, 7, cv2.BORDER_CONSTANT);
+        if id not in rotFilter and (c_batch_num<300 or (c_batch_num>600  and c_batch_num>750 )):
             img = rotRandrom(img, tranformFactor, (img.shape[1], img.shape[0]));
-
-        if id not in shadeFilter:
+        if id not in shadeFilter and c_batch_num<600:
             img = self.randomWindows(img, 0.20);
-
         # 添加遮罩
-        if id not in smuFilter:
+        if id not in smuFilter and c_batch_num<900:
             img = AddSmudginess(img, self.smu);
         # 添加污迹
-        if id not in blurFilter_level2:
+        if id not in blurFilter_level2 and c_batch_num<1200:
             if id in blurFilter_level1:
                 img = AddGauss(img, r(blur - 1));
             else:
@@ -180,13 +180,14 @@ class genSamples:
         # 20 *20 图像
         return img;
 
-    def genBatch(self, batchSize, charRange, outputPath, tranformFactor=10, shadeFactor=5, shadeFilter=[], smuFilter=[],
+    def genBatch(self, batchSize, charRange, outputPath, tranformFactor=10, shadeSize=5, shadeFilter=[], smuFilter=[],
                  blur=0,rotFilter = [], blurFilter_level1=[], blurFilter_level2=[], size=20):
         if (not os.path.exists(outputPath)):
             os.mkdir(outputPath)
         for i in xrange(batchSize):
+            print "generate Batch:",i
             for j in charRange:
-                img = self.genImage(j, tranformFactor, shadeFactor, shadeFilter, smuFilter, blur,rotFilter, blurFilter_level1,
+                img = self.genImage(i,j, tranformFactor, shadeSize, shadeFilter, smuFilter, blur,rotFilter, blurFilter_level1,
                                     blurFilter_level2, size);
                 dir = outputPath + "/" + str(j).zfill(2)
                 if (not os.path.exists(dir)):
@@ -194,8 +195,10 @@ class genSamples:
                 cv2.imwrite(dir + "/" + str(i).zfill(2) + ".jpg", img);
 
 
-#demo
 if __name__ == '__main__':
+    shadefilter = [index["T"], index["L"], index["7"], index["0"], index["D"], index["Q"] + index["2"],index["Z"]]+range(31);
+
+    print shadefilter;
     Generator = genSamples("./font/platech.ttf", "./font/platechar.ttf", "./images/smu2.jpg");
     Generator.genBatch(1500, range(65), "./samples", blur=1,
-                       shadeFilter=[index["T"], index["L"], index["7"], index["0"], index["D"], index["Q"]])
+                       shadeFilter=shadefilter);
